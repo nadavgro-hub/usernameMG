@@ -26,11 +26,14 @@ st.write("הזן את כתובת האימייל שלך כדי לקבל את שם
 # טעינת הנתונים בצורה מאובטחת מקובץ ה-CSV
 @st.cache_data # שומר בזיכרון כדי שהאתר יעבוד מהר
 def load_data():
-    # קריאת קובץ ה-CSV ודילוג על שורות ריקות פוטנציאליות בראש הקובץ
-    df = pd.read_csv("Users_-_detailed_rep_1781759942638.xlsx - sheet1.csv", skiprows=[0, 1])
-    
-    # ניקוי שם העמודות למקרה שיש רווחים נסתרים בכותרת
-    df.columns = df.columns.str.strip()
+    # קוראים את הקובץ, מדלגים על 3 השורות הראשונות (כולל הכותרת המקורית שיוצרת בעיות)
+    # ומגדירים ידנית את שמות העמודות כ-Username ו-User email
+    df = pd.read_csv(
+        "Users_-_detailed_rep_1781759942638.xlsx - sheet1.csv", 
+        header=None, 
+        skiprows=3, 
+        names=['Username', 'User email']
+    )
     
     # ניקוי רווחים והפיכה לאותיות קטנות לצורך חיפוש אמין
     df['User email'] = df['User email'].astype(str).str.strip().str.lower()
@@ -52,7 +55,7 @@ try:
                 username = result.iloc[0]['Username']
                 st.success(f"שם המשתמש שלך הוא: **{username}**")
             else:
-                st.error("כתובת האימייל לאמצאה במערכת. אנא ודא שהקלדת אותה נכון.")
+                st.error("כתובת האימייל לא נמצאה במערכת. אנא ודא שהקלדת אותה נכון.")
         else:
             st.warning("אנא הכנס כתובת אימייל.")
 
