@@ -23,17 +23,14 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.title("🔑 מערכת לאחזור שם משתמש")
 st.write("הזן את כתובת האימייל שלך כדי לקבל את שם המשתמש המערכתי.")
 
-# טעינת הנתונים בצורה מאובטחת מקובץ ה-CSV
+# טעינת הנתונים בצורה מאובטחת מקובץ האקסל
 @st.cache_data # שומר בזיכרון כדי שהאתר יעבוד מהר
 def load_data():
-    # קוראים את הקובץ, מדלגים על 3 השורות הראשונות (כולל הכותרת המקורית שיוצרת בעיות)
-    # ומגדירים ידנית את שמות העמודות כ-Username ו-User email
-    df = pd.read_csv(
-        "Users_-_detailed_rep_1781759942638.xlsx - sheet1.csv", 
-        header=None, 
-        skiprows=3, 
-        names=['Username', 'User email']
-    )
+    # קריאת קובץ ה-Excel, דילוג על שתי השורות הריקות הראשונות (skiprows=2)
+    df = pd.read_excel("Users_-_detailed_rep_1781759942638.xlsx - sheet1.csv", skiprows=2)
+    
+    # ניקוי שם העמודות למקרה שיש רווחים נסתרים בכותרת
+    df.columns = df.columns.str.strip()
     
     # ניקוי רווחים והפיכה לאותיות קטנות לצורך חיפוש אמין
     df['User email'] = df['User email'].astype(str).str.strip().str.lower()
@@ -60,4 +57,4 @@ try:
             st.warning("אנא הכנס כתובת אימייל.")
 
 except Exception as e:
-    st.error("שגיאה בטעינת בסיס הנתונים. אנא ודא שקובץ ה-CSV נמצא בתיקייה עם השם המדויק.")
+    st.error("שגיאה בטעינת בסיס הנתונים. אנא ודא שקובץ האקסל נמצא בתיקייה עם השם המדויק.")
